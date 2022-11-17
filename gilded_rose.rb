@@ -1,24 +1,20 @@
 class Item
-  attr_reader :name, :quality, :sell_in
+  attr_reader :item
 
   def initialize(name, sell_in, quality)
-    @name, @sell_in, @quality = name, sell_in, quality
+    @item = klass_for(name).new(sell_in, quality)
   end
 
-  def tick
+  def klass_for(name)
     case name
     when 'normal'
-      @item = Normal.new(sell_in, quality)
-      @item.tick
+      Normal
     when 'Aged Brie'
-      @item = Brie.new(sell_in, quality)
-      @item.tick
+      Brie
     when 'Sulfuras, Hand of Ragnaros'
-      @item = Sulfuras.new(sell_in, quality)
-      @item.tick
+      Sulfuras
     when 'Backstage passes to a TAFKAL80ETC concert'
-      @item = Backstage.new(sell_in, quality)
-      @item.tick
+      Backstage
     end
   end
 
@@ -85,13 +81,15 @@ class Item
   end
 
   def quality
-    return @item.quality if @item
-    @quality
+    item.quality
   end
 
   def sell_in
-    return @item.sell_in if @item
-    @sell_in
+    item.sell_in
+  end
+
+  def tick
+    item.tick
   end
 end
 
