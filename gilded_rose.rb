@@ -8,57 +8,90 @@ class Item
   def tick
     case name
     when 'normal'
-      return normal_tick
+      @item = Normal.new(sell_in, quality)
+      @item.tick
     when 'Aged Brie'
-      return brie_tick
+      @item = Brie.new(sell_in, quality)
+      @item.tick
     when 'Sulfuras, Hand of Ragnaros'
-      return sulfuras_tick
+      @item = Sulfuras.new(sell_in, quality)
+      @item.tick
     when 'Backstage passes to a TAFKAL80ETC concert'
-      return backstage_tick
+      @item = Backstage.new(sell_in, quality)
+      @item.tick
     end
   end
 
-  # initial method making test pass green again
-  # def normal_tick
-  #   if @quality != 0
-  #     if @sell_in > 0
-  #       @quality -= 1
-  #     elsif @sell_in <= 0
-  #       @quality -= 2
-  #     end
-  #   end
-  #   @sell_in -= 1
-  # end
+  class Normal
+    attr_reader :quality, :sell_in
 
-  # DRY method making test pass green
-  def normal_tick
-    @sell_in -= 1
-    return if @quality == 0
+    def initialize(sell_in, quality)
+      @sell_in, @quality = sell_in, quality
+    end
 
-    @quality -= 1
-    @quality -= 1 if @sell_in <= 0
+    def tick
+      @sell_in -= 1
+      return if @quality.zero?
+
+      @quality -= 1
+      @quality -= 1 if @sell_in <= 0
+    end
   end
 
-  def brie_tick
-    @sell_in -= 1
-    return @quality = 50 if @quality == 49
-    return if @quality >= 50
+  class Brie
+    attr_reader :quality, :sell_in
 
-    @quality += 1
-    @quality += 1 if @sell_in <= 0
+    def initialize(sell_in, quality)
+      @sell_in, @quality = sell_in, quality
+    end
+
+    def tick
+      @sell_in -= 1
+      return @quality = 50 if @quality == 49
+      return if @quality >= 50
+
+      @quality += 1
+      @quality += 1 if @sell_in <= 0
+    end
   end
 
-  def sulfuras_tick
+  class Sulfuras
+    attr_reader :quality, :sell_in
+
+    def initialize(sell_in, quality)
+      @sell_in, @quality = sell_in, quality
+    end
+
+    def tick
+    end
   end
 
-  def backstage_tick
-    @sell_in -= 1
-    return if @quality >= 50
-    return @quality = 0 if @sell_in < 0
+  class Backstage
+    attr_reader :quality, :sell_in
 
-    @quality += 1
-    @quality += 1 if @sell_in < 10
-    @quality += 1 if @sell_in < 5
+    def initialize(sell_in, quality)
+      @sell_in, @quality = sell_in, quality
+    end
+
+    def tick
+      @sell_in -= 1
+      return if @quality >= 50
+      return @quality = 0 if @sell_in.negative?
+
+      @quality += 1
+      @quality += 1 if @sell_in < 10
+      @quality += 1 if @sell_in < 5
+    end
+  end
+
+  def quality
+    return @item.quality if @item
+    @quality
+  end
+
+  def sell_in
+    return @item.sell_in if @item
+    @sell_in
   end
 end
 
