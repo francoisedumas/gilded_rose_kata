@@ -1,30 +1,33 @@
-class Item
-  attr_reader :item
-
-  def initialize(name, sell_in, quality)
-    @item = klass_for(name).new(sell_in, quality)
+module Item
+  def self.for(name, sell_in, quality)
+    klass_for(name).new(sell_in, quality)
   end
 
-  def klass_for(name)
+  def self.klass_for(name)
     case name
     when 'normal'
       Normal
     when 'Aged Brie'
       Brie
     when 'Sulfuras, Hand of Ragnaros'
-      Sulfuras
+      Base
     when 'Backstage passes to a TAFKAL80ETC concert'
       Backstage
     end
   end
 
-  class Normal
+  class Base
     attr_reader :quality, :sell_in
 
     def initialize(sell_in, quality)
       @sell_in, @quality = sell_in, quality
     end
 
+    def tick
+    end
+  end
+
+  class Normal < Base
     def tick
       @sell_in -= 1
       return if @quality.zero?
@@ -34,13 +37,7 @@ class Item
     end
   end
 
-  class Brie
-    attr_reader :quality, :sell_in
-
-    def initialize(sell_in, quality)
-      @sell_in, @quality = sell_in, quality
-    end
-
+  class Brie < Base
     def tick
       @sell_in -= 1
       return @quality = 50 if @quality == 49
@@ -51,24 +48,7 @@ class Item
     end
   end
 
-  class Sulfuras
-    attr_reader :quality, :sell_in
-
-    def initialize(sell_in, quality)
-      @sell_in, @quality = sell_in, quality
-    end
-
-    def tick
-    end
-  end
-
-  class Backstage
-    attr_reader :quality, :sell_in
-
-    def initialize(sell_in, quality)
-      @sell_in, @quality = sell_in, quality
-    end
-
+  class Backstage < Base
     def tick
       @sell_in -= 1
       return if @quality >= 50
@@ -78,18 +58,6 @@ class Item
       @quality += 1 if @sell_in < 10
       @quality += 1 if @sell_in < 5
     end
-  end
-
-  def quality
-    item.quality
-  end
-
-  def sell_in
-    item.sell_in
-  end
-
-  def tick
-    item.tick
   end
 end
 
